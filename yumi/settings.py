@@ -26,7 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'yumi_api'
+    'yumi_api',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
