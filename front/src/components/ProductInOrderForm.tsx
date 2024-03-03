@@ -1,21 +1,26 @@
 
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Button, CircularProgress, TextField } from '@mui/material';
+import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 import {IProductInOrder } from '../types';
 import { useCreateProductInOrder } from '../query/mutations';
+import { useNavigate } from 'react-router-dom';
 
-export const ProductInOrderForm: React.FC = () => {
+const ProductInOrderForm: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<IProductInOrder>({ mode: 'all' });
   const mutation = useCreateProductInOrder();
-
+  const navigate = useNavigate();
   const onSubmit: SubmitHandler<IProductInOrder> = (data:IProductInOrder) => {
     mutation.mutate(data);
+    
+    setTimeout(() => {
+      if(mutation.isSuccess) {navigate('/')};
+    }, 1000);
   };
   
   return (
     
     <form onSubmit={handleSubmit(onSubmit)} style={{display:'flex', flexDirection:'column'}}>
-    <h1>Product Form</h1>
+    <h1>Product In Order Form</h1>
     <TextField
         label="order"
         type = "number"
@@ -36,7 +41,7 @@ export const ProductInOrderForm: React.FC = () => {
     />
     <TextField 
       label="rental_price"
-      type="date"
+      type="number"
       {...register('rental_price', { required: true, min: 1 })}
       margin="normal"
       fullWidth
@@ -50,11 +55,13 @@ export const ProductInOrderForm: React.FC = () => {
       sx={{ mt: 2, mb: 2 }}
       disabled={!!Object.keys(errors).length} // Disable button if any errors exist
     >
-        {(mutation.isPending) ? <CircularProgress size={20} style={{ color: 'white', width: '20px', height: '20px' }}/> :'Add product'}
+        {(mutation.isPending) ? <CircularProgress size={20} style={{ color: 'white', width: '20px', height: '20px' }}/> :'Add product in Order'}
     </Button>
-      {mutation.isError && <div>An error has occurred: {mutation.error.message}</div>}
-    
+      {mutation.isError && <Typography>An error has occurred: {mutation.error.message}</Typography>}
+      {mutation.isSuccess && <Typography color = "success.main">Successfully submitted!! </Typography>}
     </form>
     
   );
 };
+
+export default ProductInOrderForm

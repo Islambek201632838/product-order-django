@@ -1,15 +1,21 @@
 
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Button, CircularProgress, TextField } from '@mui/material';
+import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 import { IProduct } from '../types';
 import { useCreateProduct } from '../query/mutations';
+import { useNavigate } from 'react-router-dom';
 
-export const ProductForm: React.FC = () => {
+const ProductForm: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<IProduct>({ mode: 'all' });
   const mutation = useCreateProduct();
+  const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<IProduct> = (data:IProduct) => {
     mutation.mutate(data);
+    
+    setTimeout(() => {
+      if(mutation.isSuccess) {navigate('/')};
+    }, 1000);
   };
   
   return (
@@ -42,9 +48,13 @@ export const ProductForm: React.FC = () => {
         >
            {(mutation.isPending) ? <CircularProgress size={20} style={{ color: 'white', width: '20px', height: '20px' }}/> :'Add product'}
         </Button>
-      {mutation.isError && <div>An error has occurred: {mutation.error.message}</div>}
+      
+      {mutation.isError && <Typography>An error has occurred: {mutation.error.message}</Typography>}
+      {mutation.isSuccess && <Typography color = "success.main">Successfully submitted!! </Typography>}
     
     </form>
     
   );
 };
+
+export default ProductForm;
