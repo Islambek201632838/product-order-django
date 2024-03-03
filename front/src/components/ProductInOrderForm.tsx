@@ -1,15 +1,18 @@
 
 import { useForm, SubmitHandler } from 'react-hook-form';
-import { Button, CircularProgress, TextField, Typography } from '@mui/material';
-import {IProductInOrder } from '../types';
+import { Button, CircularProgress, MenuItem, Select, TextField, Typography } from '@mui/material';
+import {IOrder, IProduct, IProductInOrder } from '../types';
 import { useCreateProductInOrder } from '../query/mutations';
 import { useNavigate } from 'react-router-dom';
 import { useGetOrders, useGetProducts } from '../query/queries';
+import { useState } from 'react';
 
 const ProductInOrderForm: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<IProductInOrder>({ mode: 'all' });
-  const { data: products = [], isLoading: isLoadingProducts, isError: isErrorProducts } = useGetProducts();
-  const { data: orders = [], isLoading: isLoadingOrders, isError: isErrorOrders } = useGetOrders();
+  const { data: products = []} = useGetProducts();
+  const { data: orders = [] } = useGetOrders();  
+  const [productId, setproductId] = useState(1);
+  const [orderId, setorderId] = useState(1);
   
   const mutation = useCreateProductInOrder();
   const navigate = useNavigate();
@@ -20,29 +23,51 @@ const ProductInOrderForm: React.FC = () => {
       if(mutation.isSuccess) {navigate('/')};
     }, 1000);
   };
-  
+
+
   return (
     
     <form onSubmit={handleSubmit(onSubmit)} style={{display:'flex', flexDirection:'column'}}>
     <h1>Product In Order Form</h1>
-    <TextField
-        label="order"
-        type = "number"
-        {...register('order', { required: true })} 
-        margin="normal"
-        fullWidth
-        error={!!errors.order}
-        helperText={errors.order?.message || 'Поле обязательно для заполнения'} 
-      />
-    <TextField // Use Material UI TextField
+    <Select
+      sx={{mb : 2}}
+      labelId="product-select-label"
+      {...register('product', { required: true })}
+      id="id-product"
+      value={productId}
       label="product"
-      type="number"
-      {...register('product', { required: true, min: 1 })}
-      margin="normal"
-      fullWidth
-      error={!!errors.product} // Set error state based on validation
-      helperText={errors.product?.message || 'Поле должно быть числом'}
-    />
+      onChange={(event) => {
+        // Find the order by the selected ID and set it
+        const selectedproduct = products.find((product : IProduct) => product.id === event.target.value);
+        setproductId(selectedproduct.id);
+      }}
+    >
+      {products.map((item: IProduct) => (
+        <MenuItem key={item.id} value={item.id}>
+          {item.name}
+        </MenuItem>
+      ))}
+    </Select>
+    
+    <Select
+    labelId="order-select-label"
+    
+    {...register('order', { required: true })}
+    id="id-order"
+    value={orderId} 
+    label="order"
+    onChange={(event) => {
+      // Find the order by the selected ID and set it
+      const selectedOrder = orders.find((order : IOrder) => order.id === event.target.value);
+      setorderId(selectedOrder.id);
+    }}
+  >
+    {orders.map((item: IOrder) => (
+      <MenuItem value={item.id}>{new Date(item.start_date)?.toDateString()} - {new Date(item.end_date)?.toDateString()}</MenuItem>
+
+    ))}
+  </Select>
+
     <TextField 
       label="rental_price"
       type="number"
@@ -51,6 +76,16 @@ const ProductInOrderForm: React.FC = () => {
       fullWidth
       error={!!errors.rental_price} // Set error state based on validation
       helperText={errors.rental_price?.message || 'Поле должно быть числом'}
+    />
+
+<TextField 
+      label="duration"
+      type="number"
+      {...register('duration', { required: true, min: 1 })}
+      margin="normal"
+      fullWidth
+      error={!!errors.duration} // Set error state based on validation
+      helperText={errors.duration?.message || 'Поле должно быть числом'}
     />
 
     <Button // Use Material UI Button
@@ -68,4 +103,4 @@ const ProductInOrderForm: React.FC = () => {
   );
 };
 
-export default ProductInOrderForm
+export default ProductInOrderForm;

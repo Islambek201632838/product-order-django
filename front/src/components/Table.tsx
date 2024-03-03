@@ -58,8 +58,8 @@ const DataTable = () => {
           <TableBody>
             {orders.map((order : IOrder) => (
               <TableRow key={order.id}>
-                <TableCell align='center'>start date</TableCell>
-                <TableCell align='center'>end date</TableCell>
+                <TableCell align='center'>{new Date(order.start_date)?.toDateString()}</TableCell>
+                <TableCell align='center'>{new Date(order.end_date)?.toDateString()}</TableCell>
                 <TableCell align='center'>{order.total_cost}</TableCell>
               </TableRow>
             ))}
@@ -87,7 +87,7 @@ const DataTable = () => {
               <TableRow key={productInOrder.order}>
                 <TableCell align='center'>{productInOrder.order}</TableCell>
                 <TableCell align='center'>{productInOrder.product}</TableCell>
-                <TableCell align='center'>{productInOrder.durationDays}</TableCell>
+                <TableCell align='center'>{productInOrder.duration}</TableCell>
                 <TableCell align='center'>{productInOrder.rental_price}</TableCell>
               </TableRow>
             ))}

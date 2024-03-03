@@ -16,6 +16,6 @@ export interface IProduct {
     product: number;
     order: number;
     rental_price: number;
-    durationDays: number;
+    duration: number;
   }
   
