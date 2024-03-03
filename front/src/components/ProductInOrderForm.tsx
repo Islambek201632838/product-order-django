@@ -4,9 +4,13 @@ import { Button, CircularProgress, TextField, Typography } from '@mui/material';
 import {IProductInOrder } from '../types';
 import { useCreateProductInOrder } from '../query/mutations';
 import { useNavigate } from 'react-router-dom';
+import { useGetOrders, useGetProducts } from '../query/queries';
 
 const ProductInOrderForm: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<IProductInOrder>({ mode: 'all' });
+  const { data: products = [], isLoading: isLoadingProducts, isError: isErrorProducts } = useGetProducts();
+  const { data: orders = [], isLoading: isLoadingOrders, isError: isErrorOrders } = useGetOrders();
+  
   const mutation = useCreateProductInOrder();
   const navigate = useNavigate();
   const onSubmit: SubmitHandler<IProductInOrder> = (data:IProductInOrder) => {

@@ -6,15 +6,18 @@ const axiosInstance = axios.create({ baseURL: BASE_URL });
 
 
 export const getProduct = async () => {
-    return (await axiosInstance.get("products/"));
+    const response = await axiosInstance.get("products/");
+    return response.data;
   };
 
 export const getOrder = async () => {
-return (await axiosInstance.get("orders/"));
+    const response = await axiosInstance.get("orders/");
+    return response.data;
 };
 
 export const getProductInOrder = async () => {
-    return (await axiosInstance.get("productInOrder/"));
+    const response = await axiosInstance.get("productInOrder/");
+    return response.data;
     };
 
 
